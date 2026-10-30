@@ -1,0 +1,9 @@
+.venv/
+build/
+site/
+.verify-helper/
+.competitive-verifier/verify_files.json
+.competitive-verifier/result.json
+__pycache__/
+.competitive-verifier/cache/
+.competitive-verifier/bundled/
