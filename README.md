@@ -8,8 +8,9 @@ namespace `cp`, standard-library dependencies only. Licensed under [CC0-1.0](LIC
 static_assert(cp::add(2, 3) == 5);
 ```
 
-Compile with `-std=c++17 -Iinclude`. The initial implementation is intentionally
-limited to `cp::add` to validate infrastructure. Its sum must fit `std::int64_t`.
+Compile with `-std=c++17 -Iinclude`. `cp::add` requires its sum to fit `std::int64_t`.
+[DSU (Union Find)](docs/data_structure/dsu.md) provides `merge`, `same`, and `size`
+in amortized O(α(n)) time.
 
 - `include/cp/{math,data_structure,graph,string,geometry,utility}/`: public headers
 - `verify/yosupo/`: Library Checker verification programs
