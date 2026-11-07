@@ -4,7 +4,8 @@ from pathlib import Path
 root = Path(__file__).resolve().parents[1]
 out = root / 'site'
 out.mkdir(exist_ok=True)
-files = [root / 'README.md', root / 'docs/development.md', root / 'CONTRIBUTING.md']
+files = [root / 'README.md', root / 'CONTRIBUTING.md']
+files += sorted((root / 'docs').rglob('*.md'))
 files += sorted((root / 'include/cp').rglob('*.hpp'))
 sections = ''.join('<section><h2>' + escape(str(p.relative_to(root))) + '</h2><pre>'
                    + escape(p.read_text()) + '</pre></section>' for p in files)
