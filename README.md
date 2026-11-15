@@ -23,5 +23,3 @@ static_assert(cp::add(2, 3) == 5);
 
 GitHub ActionsでGCC・Clangによるテストを行い、competitive-verifierで
 Yosupoの公式テストケースを検証します。
-mainブランチのCIが成功すると、Pagesワークフローが静的HTMLのドキュメントを公開します。
-リポジトリの管理者は、Pagesの公開元にGitHub Actionsを選択してください。
