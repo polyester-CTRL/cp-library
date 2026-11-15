@@ -19,6 +19,15 @@ jobs:
         env:
           CXX: ${{ matrix.compiler }}
         run: bash scripts/test-unit.sh
+  sanitizer:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: AddressSanitizer and UndefinedBehaviorSanitizer
+        env:
+          CXX: clang++
+          CXXFLAGS: -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer
+        run: bash scripts/test-unit.sh
   verify:
     runs-on: ubuntu-24.04
     steps:
@@ -51,7 +60,7 @@ jobs:
           path: site
   deploy:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    needs: [unit, verify, docs]
+    needs: [unit, sanitizer, verify, docs]
     runs-on: ubuntu-24.04
     permissions:
       pages: write
