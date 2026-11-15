@@ -1,23 +1,27 @@
 # cp-library
 
-Original, public-domain competitive programming library: C++17, header-only,
-namespace `cp`, standard-library dependencies only. Licensed under [CC0-1.0](LICENSE).
+C++17対応・ヘッダオンリーの競技プログラミングライブラリです。
+独自に実装したコードをパブリックドメインとして公開しています。
+名前空間は `cp`、依存先は標準ライブラリのみです。
+ライセンスは [CC0-1.0](LICENSE) です。
 
 ```cpp
 #include "cp/math/add.hpp"
 static_assert(cp::add(2, 3) == 5);
 ```
 
-Compile with `-std=c++17 -Iinclude`. `cp::add` requires its sum to fit `std::int64_t`.
-[DSU (Union Find)](docs/data_structure/dsu.md) provides `merge`, `same`, and `size`
-in amortized O(α(n)) time.
+`-std=c++17 -Iinclude` を指定してコンパイルしてください。
+`cp::add` の和は `std::int64_t` の範囲内である必要があります。
+[DSU（Union Find）](docs/data_structure/dsu.md) は、ならし O(α(n)) 時間で
+`merge`・`same`・`size` を提供します。
 
-- `include/cp/{math,data_structure,graph,string,geometry,utility}/`: public headers
-- `verify/yosupo/`: Library Checker verification programs
-- `tests/unit/`: dependency-free unit tests
-- [Build, verification and Pages setup](docs/development.md)
-- [Contributing](CONTRIBUTING.md)
+- `include/cp/{math,data_structure,graph,string,geometry,utility}/`：公開ヘッダ
+- `verify/yosupo/`：Library Checker用の検証プログラム
+- `tests/unit/`：外部ライブラリに依存しない単体テスト
+- [ビルド・検証・GitHub Pagesの設定](docs/development.md)
+- [コントリビューションガイド](CONTRIBUTING.md)
 
-GitHub Actions tests GCC/Clang and runs competitive-verifier against Yosupo.
-Static HTML documentation is deployed by the Pages workflow after successful CI
-on main. Repository owners must select GitHub Actions as the Pages source.
+GitHub ActionsでGCC・Clangによるテストを行い、competitive-verifierで
+Yosupoの公式テストケースを検証します。
+mainブランチのCIが成功すると、Pagesワークフローが静的HTMLのドキュメントを公開します。
+リポジトリの管理者は、Pagesの公開元にGitHub Actionsを選択してください。

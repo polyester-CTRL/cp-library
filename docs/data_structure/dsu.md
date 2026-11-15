@@ -1,9 +1,9 @@
-# DSU (Union Find)
+# DSU（Union Find）
 
-`cp::dsu` maintains disjoint sets of vertices indexed from `0` to `n - 1`.
-Include `cp/data_structure/dsu.hpp`. The implementation is original C++17,
-header-only, self-contained, safe in multiple translation units, and dedicated
-under CC0-1.0 (see [LICENSE](../../LICENSE)). Only standard headers are required.
+`cp::dsu` は、頂点番号 `0` から `n - 1` の互いに素な集合を管理します。
+`cp/data_structure/dsu.hpp` をインクルードしてください。
+C++17対応の独自実装で、ヘッダ単体で利用でき、複数の翻訳単位から安全にインクルードできます。
+標準ヘッダのみを使用し、CC0-1.0で公開しています（[LICENSE](../../LICENSE)を参照）。
 
 ```cpp
 #include "cp/data_structure/dsu.hpp"
@@ -18,53 +18,61 @@ int main() {
 }
 ```
 
-Compile with `g++ -std=c++17 -Iinclude example.cpp` (or `clang++`).
+`g++ -std=c++17 -Iinclude example.cpp` でコンパイルできます。
+`g++` の代わりに `clang++` も使用できます。
 
-| API | Result | Time |
+| API | 動作・返り値 | 時間計算量 |
 | --- | --- | --- |
-| `explicit dsu(int n = 0)` | Construct `n` singleton components | O(n) |
-| `bool merge(int a, int b)` | Join the components; return true iff they were different | Amortized O(α(n)) |
-| `bool same(int a, int b)` | Whether the vertices belong to the same component | Amortized O(α(n)) |
-| `int size(int a)` | Number of vertices in the component containing `a` | Amortized O(α(n)) |
+| `explicit dsu(int n = 0)` | 各頂点を独立した集合とする、`n` 頂点のDSUを構築 | O(n) |
+| `bool merge(int a, int b)` | 2頂点の属する集合を併合し、異なる集合を併合した場合のみtrueを返す | ならし O(α(n)) |
+| `bool same(int a, int b)` | 2頂点が同じ集合に属するかを返す | ならし O(α(n)) |
+| `int size(int a)` | 頂点 `a` が属する集合の要素数を返す | ならし O(α(n)) |
 
-Construction requires `0 <= n <= INT_MAX` and enough memory for `n` integers.
-An empty DSU is valid, but no vertex operation is valid on it. Every vertex
-argument must satisfy `0 <= vertex < n`. Debug assertions check these
-preconditions; violating them is unsupported when assertions are disabled.
-Allocation failures propagate from `std::vector`.
+構築時には `0 <= n <= INT_MAX` と、`n` 個の整数を格納できるメモリが必要です。
+空のDSUも構築できますが、空のDSUに対する頂点操作はできません。
+各頂点引数は `0 <= vertex < n` を満たす必要があります。
+これらの前提条件はデバッグ時のアサーションで検査します。
+アサーションを無効にした場合も、前提条件に違反する使い方はサポートしません。
+メモリ確保に失敗した場合は、`std::vector` の例外がそのまま伝播します。
 
-Union by Size attaches the smaller tree to the larger one. Iterative full Path
-Compression rewrites every traversed parent to the root. A sequence of operations
-costs amortized O(α(n)) per operation; an individual operation can take O(log n).
-Storage is O(n), with O(1) auxiliary space per operation. Queries also compress
-paths, so `same` and `size` are non-const. Self merges and repeated merges return
-false and preserve component sizes. There is no deletion or rollback operation.
+Union by Sizeにより、要素数の小さい木を大きい木に接続します。
+反復処理による完全な経路圧縮（Path Compression）で、
+探索中に通過したすべての頂点の親を根に付け替えます。
+操作列全体で見ると1操作あたりの時間計算量はならし O(α(n)) です。
+単一の操作では O(log n) 時間かかる場合があります。
+記憶領域は O(n)、各操作の追加領域は O(1) です。
+問い合わせでも経路圧縮を行うため、`same` と `size` は非constです。
+自己併合や同じ集合の再併合はfalseを返し、集合の要素数を変更しません。
+削除やロールバックには対応していません。
 
-Roots store negative component sizes in an `int`; other entries store parent
-indices. A component size is at most `n <= INT_MAX`, so size addition and negation
-are representable. The class does not promise support for more than `INT_MAX`
-vertices, and no larger intermediate size is formed.
+根には集合の要素数の符号を反転した値を `int` で格納し、
+それ以外の頂点には親の頂点番号を格納します。
+集合の要素数は最大でも `n <= INT_MAX` なので、
+要素数の加算と符号反転は `int` の範囲内に収まります。
+`INT_MAX` を超える頂点数には対応せず、
+計算途中で `n` を超える要素数が生じることもありません。
 
-Verification uses [Library Checker: Unionfind](https://judge.yosupo.jp/problem/unionfind)
-through `verify/yosupo/dsu.test.cpp` and competitive-verifier. Unit tests cover
-empty/singleton sets, endpoints, self/repeated/reversed merges, unequal component
-sizes, balanced trees, 200,000 vertices, repeated path compression, double inclusion,
-and multiple translation units. Five fixed seeds drive 320,000 mixed operations
-on `n = 1..64`; connectivity, sizes, and merge results are compared with an
-independent O(n) label replacement implementation, including periodic all-pairs
-checks. Tests use explicit failure checks and still run with `NDEBUG`.
+`verify/yosupo/dsu.test.cpp` とcompetitive-verifierを使用して、
+[Library CheckerのUnionfind問題](https://judge.yosupo.jp/problem/unionfind)で検証します。
+単体テストでは、空集合・1頂点・端点・自己併合・重複併合・逆順の併合・
+要素数の異なる集合の併合・平衡木・20万頂点・繰り返しの経路圧縮・
+二重インクルード・複数翻訳単位を確認します。
+5種類の固定シードを使用し、`n = 1..64` に対して計32万回の操作を行います。
+独立した O(n) のラベル置換による愚直実装と、
+連結性・集合の要素数・併合の返り値を比較し、定期的に全頂点対も比較します。
+テストは明示的に失敗を判定するため、`NDEBUG` を定義しても実行されます。
 
-From the repository root:
+リポジトリのルートで次のコマンドを実行してください。
 
 ```sh
 CXX=g++ bash scripts/test-unit.sh
 CXX=clang++ bash scripts/test-unit.sh
 CXX=clang++ CXXFLAGS='-O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer' bash scripts/test-unit.sh
-# Activate the development venv and git add the new header/verifier first.
+# 開発用の仮想環境を有効にし、追加したヘッダと検証プログラムを先にgit addしてください。
 bash scripts/verify.sh
 python3 scripts/build-docs.py
 ```
 
-The PR's CI run provides compiler, sanitizer, and official-case results; its
-`verification-results` artifact contains the verifier target and result JSON.
-These commands describe the checks, not a claim that an unexecuted run passed.
+PRのCI実行で、コンパイラ別のテスト・Sanitizer・公式テストケースの結果を確認できます。
+`verification-results` アーティファクトには、検証対象一覧と結果のJSONが含まれます。
+上記のコマンドは検証手順の説明であり、未実行の検証が成功したことを示すものではありません。
